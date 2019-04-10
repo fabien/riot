@@ -10156,6 +10156,20 @@
   }
 
   /**
+   * Plain object check
+   */
+  function isPlainObject(obj) {
+    if (typeof obj == 'object' && obj !== null) {
+      if (typeof Object.getPrototypeOf === 'function') {
+        var proto = Object.getPrototypeOf(obj);
+        return proto === Object.prototype || proto === null
+      }
+      return Object.prototype.toString.call(obj) === '[object Object]'
+    }
+    return false
+  }
+
+  /**
    * Tag creation factory function
    * @constructor
    * @param { Object } impl - it contains the tag template, and logic
@@ -10167,7 +10181,7 @@
     if ( conf === void 0 ) conf = {};
 
     var tag = conf.context || {};
-    var opts = extend(conf.opts || {});
+    var opts = isPlainObject(conf.optst) ? extend({}, conf.opts) : (conf.opts || {});
     var parent = conf.parent;
     var isLoop = conf.isLoop;
     var isAnonymous = !!conf.isAnonymous;
