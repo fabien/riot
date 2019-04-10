@@ -10167,7 +10167,7 @@
     if ( conf === void 0 ) conf = {};
 
     var tag = conf.context || {};
-    var opts = conf.opts || {};
+    var opts = extend(conf.opts || {});
     var parent = conf.parent;
     var isLoop = conf.isLoop;
     var isAnonymous = !!conf.isAnonymous;
