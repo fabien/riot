@@ -2910,15 +2910,57 @@
   /**
    * Plain object check
    */
-  function isPlainObject(obj) {
-    if (typeof obj == 'object' && obj !== null) {
-      if (typeof Object.getPrototypeOf === 'function') {
-        var proto = Object.getPrototypeOf(obj);
-        return proto === Object.prototype || proto === null
-      }
-      return Object.prototype.toString.call(obj) === '[object Object]'
+  // export default function isPlainObject(obj) {
+  //   if (typeof obj == 'object' && obj !== null) {
+  //     if (typeof Object.getPrototypeOf === 'function') {
+  //       const proto = Object.getPrototypeOf(obj)
+  //       return proto === Object.prototype || proto === null
+  //     }
+  //     return Object.prototype.toString.call(obj) === '[object Object]'
+  //   }
+  //   return false
+  // }
+
+  function isPlainObject(o) {
+    var ctor,prot;
+
+    if (isObjectObject(o) === false) { return false }
+
+    // If has modified constructor
+    ctor = o.constructor;
+    if (typeof ctor !== 'function') { return false }
+
+    // If has modified prototype
+    prot = ctor.prototype;
+    if (isObjectObject(prot) === false) { return false }
+
+    // If constructor does not have an Object-specific method
+    if (prot.hasOwnProperty('isPrototypeOf') === false) {
+      return false
     }
-    return false
+    
+    if (isObservable(o)) { return false }
+
+    // Most likely a plain Object
+    return true
+  }
+
+  function isObject$1(val) {
+    return val != null && typeof val === 'object' && Array.isArray(val) === false
+  }
+
+  function isObjectObject(o) {
+    return isObject$1(o) === true
+      && Object.prototype.toString.call(o) === '[object Object]'
+  }
+
+  function isObservable(o) {
+    return isObject$1(o) && isFunction$1(o.trigger)
+      && isFunction$1(o.on) && isFunction$1(o.off) && isFunction$1(o.one)
+  }
+
+  function isFunction$1(v) {
+    return typeof v === 'function'
   }
 
   /**
@@ -2933,7 +2975,7 @@
     if ( conf === void 0 ) conf = {};
 
     var tag = conf.context || {};
-    var opts = isPlainObject(conf.optst) ? extend({}, conf.opts) : (conf.opts || {});
+    var opts = isPlainObject(conf.opts) ? extend({}, conf.opts) : (conf.opts || {});
     var parent = conf.parent;
     var isLoop = conf.isLoop;
     var isAnonymous = !!conf.isAnonymous;
