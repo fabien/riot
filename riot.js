@@ -2817,12 +2817,13 @@
     define(tag$$1, 'root', root);
 
     // if we need to wait that the parent "mount" or "updated" event gets triggered
-    if (!__.skipAnonymous && tag$$1.parent) {
+    if (!__.skipAnonymous && tag$$1.parent && !tag$$1.opts.__premounted__) {
       var p = getImmediateCustomParent(tag$$1.parent);
       p.one(!p.isMounted ? 'mount' : 'updated', function () {
         setMountState.call(tag$$1, true);
       });
     } else {
+      delete tag$$1.opts.__premounted__;
       // otherwise it's not a child tag we can trigger its mount event
       setMountState.call(tag$$1, true);
     }
